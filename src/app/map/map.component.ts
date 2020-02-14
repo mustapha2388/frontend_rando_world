@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {icon, latLng, LeafletMouseEvent, Map, MapOptions, marker, tileLayer} from 'leaflet';
+import * as L from 'leaflet';
 import {DEFAULT_LATITUDE, DEFAULT_LONGITUDE} from '../app.constants';
 import {MapPoint} from '../shared/models/map-point.model';
 import {NominatimResponse} from '../shared/models/nominatim-response.model';
-
+import 'leaflet-routing-machine';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -11,9 +11,9 @@ import {NominatimResponse} from '../shared/models/nominatim-response.model';
 })
 export class MapComponent implements OnInit {
 
-  map: Map;
+  map: L.Map;
   mapPoint: MapPoint;
-  options: MapOptions;
+  options: L.MapOptions;
   lastLayer: any;
 
   results: NominatimResponse[];
@@ -24,11 +24,25 @@ export class MapComponent implements OnInit {
   ngOnInit () {
     this.initializeDefaultMapPoint();
     this.initializeMapOptions();
+    
+        
+   
+
   }
 
-  initializeMap (map: Map) {
+  initializeMap (map: L.Map) {
     this.map = map;
     this.createMarker();
+
+    L.Routing.control({
+      waypoints: [
+        L.latLng(57.74, 11.94),
+        L.latLng(57.6792, 11.949)
+      ],
+      routeWhileDragging: true,
+    }).addTo(this.map);
+
+
   }
 
   getAddress (result: NominatimResponse) {
@@ -44,7 +58,7 @@ export class MapComponent implements OnInit {
     this.options = {
       zoom: 12,
       layers: [
-        tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: 'OSM'})
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: 'OSM'})
       ]
     }
   }
@@ -57,7 +71,7 @@ export class MapComponent implements OnInit {
     };
   }
 
-  private onMapClick (e: LeafletMouseEvent) {
+  private onMapClick (e: L.LeafletMouseEvent) {
     this.clearMap();
     this.updateMapPoint(e.latlng.lat, e.latlng.lng);
     this.createMarker();
@@ -74,13 +88,13 @@ export class MapComponent implements OnInit {
   private createMarker () {
     this.clearMap();
     const mapIcon = this.getDefaultIcon();
-    const coordinates = latLng([this.mapPoint.latitude, this.mapPoint.longitude]);
-    this.lastLayer = marker(coordinates).setIcon(mapIcon).addTo(this.map);
+    const coordinates = L.latLng([this.mapPoint.latitude, this.mapPoint.longitude]);
+    this.lastLayer = L.marker(coordinates).setIcon(mapIcon).addTo(this.map);
     this.map.setView(coordinates, this.map.getZoom());
   }
 
   private getDefaultIcon () {
-    return icon({
+    return L.icon({
       iconSize: [25, 41],
       iconAnchor: [13, 41],
       iconUrl: 'assets/marker-icon.png'
