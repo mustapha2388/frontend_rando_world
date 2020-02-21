@@ -8,17 +8,29 @@ import {NominatimResponse} from '../shared/models/nominatim-response.model';
 })
 export class ResultsListComponent {
 
+  @Input() choiceResult:string = "";
+
   @Input()
   results: NominatimResponse[];
 
+  @Input()
+  results2: NominatimResponse[];
+
+
   @Output()
   locationSelected = new EventEmitter();
+  @Output()
+  locationSelected2 = new EventEmitter();
 
   constructor () {
   }
 
   selectResult (result: NominatimResponse) {
     this.locationSelected.emit(result);
+  }
+
+  selectResult2 (result: NominatimResponse) {
+    this.locationSelected2.emit(result);
   }
 
 }

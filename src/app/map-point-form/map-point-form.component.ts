@@ -9,6 +9,10 @@ import {MapPoint} from '../shared/models/map-point.model';
 export class MapPointFormComponent {
   @Input()
   mapPoint: MapPoint;
+  @Input()
+  mapPoint2: MapPoint;
+  @Input()
+  choiceResult: string;
 
   constructor () {
   }
